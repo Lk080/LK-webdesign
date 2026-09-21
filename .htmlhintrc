@@ -1,0 +1,24 @@
+{
+  "doctype-first": true,
+  "doctype-html5": true,
+  "tag-pair": true,
+  "tagname-specialchars": true,
+  "attr-no-duplication": true,
+  "attr-unsafe-chars": true,
+  "id-unique": true,
+  "src-not-empty": true,
+  "alt-require": true,
+  "title-require": true,
+  "html-lang-require": true,
+  "meta-charset-require": true,
+  "tag-no-obsolete": true,
+  "button-type-require": true,
+  "tags-check": {
+    "a": {},
+    "img": {"attrsRequired": ["src", "alt"]},
+    "main": {}, "nav": {}, "script": {},
+    "button": {"attrsOptional": [["type", "button", "submit", "reset"]]},
+    "form": {"attrsOptional": [["method", "get", "post", "dialog"]]}
+  },
+  "lk-valid-nesting": true
+}
