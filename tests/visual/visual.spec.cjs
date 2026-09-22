@@ -67,16 +67,16 @@ for (const site of sites) test(`${site.id} visual reference and layout`, async (
   const controls = [site.cta];
   await page.evaluate(() => scrollTo(0, 0));
   await page.evaluate(() => new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve))));
-  if (layout.viewportWidth <= 900) {
-    await page.evaluate(() => scrollTo(0,0)); await page.locator('button.menu').click();
-    await expect(page.locator('button.menu')).toHaveAttribute('aria-expanded', 'true');
+  if (layout.viewportWidth <= (site.menuBreakpoint ?? 900)) {
+    await page.evaluate(() => scrollTo(0,0)); await page.locator(site.menu || 'button.menu').click();
+    await expect(page.locator(site.menu || 'button.menu')).toHaveAttribute('aria-expanded', 'true');
   }
   for (const link of await page.locator(`${site.nav} a`).all()) {
     await expect.soft(link).toBeInViewport();
     const box = await link.boundingBox();
     expect.soft(box && box.x >= -1 && box.x + box.width <= layout.viewportWidth + 1, 'Navigation horizontal bounds').toBeTruthy();
   }
-  if (layout.viewportWidth <= 900) await page.keyboard.press('Escape');
+  if (layout.viewportWidth <= (site.menuBreakpoint ?? 900)) await page.keyboard.press('Escape');
   for (const selector of controls) {
     const control = page.locator(selector); await control.scrollIntoViewIfNeeded();
     const hit = await control.evaluate(e => { const r=e.getBoundingClientRect(); const hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2); return hit===e || e.contains(hit); });
