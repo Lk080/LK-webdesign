@@ -1,0 +1,4 @@
+interface:
+  display_name: "LK Delivery"
+  short_description: "Klantreview en gecontroleerde overdracht"
+  default_prompt: "Gebruik $lk-delivery voor de passende LK-taak binnen de afgesproken scope."

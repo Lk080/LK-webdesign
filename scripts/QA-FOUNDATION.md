@@ -72,12 +72,12 @@ en hash, tijd en hergebruikstatus. Browserresultaten bevatten testcase-states;
 Axe voegt scans toe; visual voegt bestaande capture-artifacts toe. Er wordt niet
 opnieuw gecaptured om een overzicht te bouwen.
 
-- `CHECKS_COMPLETED`: de geselecteerde checks zijn uitgevoerd; niet automatisch opleverbaar.
-- `TECHNICAL_GATE_PASS`: de vereiste checks én viewports zijn aanwezig, passen bij de
-  huidige hashes/omgeving en bevatten geen fouten. Light/medium-dekking is normaal incompleet.
-- `OWNER_REVIEW_PENDING`: technische gate gehaald; menselijke review ontbreekt.
-- `DELIVERY_APPROVED`: uitsluitend met expliciet owner-reviewbewijs voor exact deze
-  snapshot. Normale runners genereren dit nooit.
+De beleidsbetekenis en reviewvoorwaarden van CHECKS_COMPLETED,
+TECHNICAL_GATE_PASS, OWNER_REVIEW_PENDING en DELIVERY_APPROVED staan uitsluitend
+in de [Standard](../LK-DEVELOPMENT-STANDARD.md#status-en-oplevering).
+`qa-evidence.assess` toetst snapshots en geregistreerde check/viewport-aanwezigheid;
+het valideert niet alle betekenisvolle flowstates en laat SKIP naast PASS toe.
+Een reviewer moet noodzakelijke skips/ontbrekende states dus expliciet afhandelen.
 
 `qa-evidence.approve` vereist decision=approve, actor=human-owner, reviewer, reviewedAt,
 evidence en de exacte snapshot. Dit is een expliciete lokale attestatie, geen
@@ -110,7 +110,7 @@ Deze kopieert bestaande captures, start geen browser en doet geen brede update.
 `npm run qa:visual:accept -- <review.json>` toont alleen het plan. `--apply` accepteert
 uitsluitend die bestanden; bestaande referenties worden met reviewmetadata gearchiveerd
 in dezelfde run. Daarna is een normale vergelijking zonder updates verplicht.
-Vooraf expliciete menselijke scope/review; deze foundationrun accepteert niets.
+Vooraf expliciete menselijke scope/review volgens de Standard.
 
 ## Deterministische aanvullende controles
 
@@ -140,3 +140,23 @@ helper en is expliciet uitgesloten van onderhouden toolinglint. Hij is geen
 ondersteunde automatische runner. De drie rapporthelpers zijn wel gemigreerd.
 Tijdelijke screenshot-/contrastscripts blijven historische artifacts; de gedeelde
 visual-captures en index zijn de onderhouden reviewroute.
+
+## Filters voor gerichte uitvoering
+
+`--check`: smoke, functional, axe, visual, html, css, js, links, static, foundation,
+tooling, lighthouse. LIGHT vereist een check; browserchecks ook `--project`.
+`--project mobile|desktop|tablet` gebruikt functioneel `*-chromium` en visueel
+mobile-standard/desktop/tablet. Tablet is alleen visueel beschikbaar. FINAL
+accepteert geen check/project/grep-filter; gebruik LIGHT/MEDIUM voor subsets.
+`--grep` is een regex voor functionele testnamen, gecombineerd met de sitefilter.
+Geen passende tests is een fout. Een visual-test omvat een volledige site/viewport-
+referentieset; er is geen componentfilter. `--compare <record.json>` voert niets uit
+en selecteert slechts kandidaten, zonder artifactvalidatie of automatische testskip.
+
+```sh
+npm run qa:light -- --site lk --check functional --grep hoofdnavigatie --project desktop
+npm run qa:light -- --site lk --check axe --project mobile
+npm run qa:medium -- --site lk --check visual --project tablet
+```
+
+Voeg alleen `--run` toe om deze plannen werkelijk uit te voeren.

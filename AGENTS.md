@@ -1,11 +1,17 @@
-# LK workspace workflow
+# LK workspace
 
-Lees voor development/QA [LK Development Standard V2](LK-DEVELOPMENT-STANDARD.md).
-Standaard: impact bepalen → gerichte LIGHT QA; MEDIUM bij mijlpalen; FULL FINAL
-vóór oplevering. Herhaal geen geldig PASS-bewijs zonder relevante wijziging.
-Nieuwe `qa:light`, `qa:medium`, `qa:final` tonen eerst een plan; uitvoeren met `--run`.
-Kelmora (`docs/demos/vakman`, bijbehorende tests/baselines) is bevroren na checkpoint
-`4c8674f629e4c4e78dd4571bba6b4fbd0609fb9a`: alleen aanpassen/hertesten op nieuwe opdracht.
-Behoud bestaande ongecommitte wijzigingen. Geen automatische baseline-updates,
-dependency-installaties, echte Formspree-inzendingen, commits of push.
-Na FINAL PASS stoppen; geen extra redesigns zonder nieuwe opdracht.
+- Bepaal project, scope en wijzigingsimpact vóór edits. Behoud bestaand user work.
+- Lees de relevante regels in [Development Standard](LK-DEVELOPMENT-STANDARD.md);
+  gebruik de projectregistratie voor scope/freeze. Wijzig of hertest frozen projecten
+  alleen na expliciete heropening; omzeil geen guards.
+- Gebruik de bestaande stack/conventies; geen ongevraagde dependencies of migraties.
+- Werk mobile-first bij nieuwe frontends. Neem toegankelijkheid, performance, SEO
+  en security/privacy mee waar de wijziging die raakt.
+- Gebruik bestaande deterministische QA en hergebruik aantoonbaar geldig bewijs.
+  Benoem warnings, skips, ontbrekende dekking en beperkingen; geen verzonnen PASS.
+- Geen echte formulierinzendingen of andere externe side effects zonder expliciete
+  toestemming. QA houdt mocks/blokkering actief en gebruikt fictieve gegevens.
+- Geen automatische baselineacceptatie, commit, push of deployment.
+- TECHNICAL_GATE_PASS is geen menselijke goedkeuring. DELIVERY_APPROVED vereist
+  expliciete owner-goedkeuring van de exacte beoordeelde staat.
+- Stop na de afgesproken scope. Extra polish is nieuwe scope.

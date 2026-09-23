@@ -1,0 +1,4 @@
+interface:
+  display_name: "LK Technical Gate"
+  short_description: "Technische gate met gericht bewijshergebruik"
+  default_prompt: "Gebruik $lk-technical-gate voor de passende LK-taak binnen de afgesproken scope."

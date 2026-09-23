@@ -1,0 +1,4 @@
+interface:
+  display_name: "LK Premium Design"
+  short_description: "Unieke klantfrontends en art direction"
+  default_prompt: "Gebruik $lk-premium-design voor de passende LK-taak binnen de afgesproken scope."

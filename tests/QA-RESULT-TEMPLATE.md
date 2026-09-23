@@ -17,6 +17,10 @@
 - Handmatig: keyboard/focus, responsive, volledige scrollreview, SEO, claims:
 - Ongeteste onderdelen / open problemen / warnings:
 - Git diff/status en behouden bestaand werk:
-- Eindoordeel: PENDING / FAIL / PASS met concrete onderbouwing.
+- Technische status: TECHNICAL_GATE_PASS / INCOMPLETE / FAIL; onderbouw met dekking.
+- Owner-status: OWNER_REVIEW_PENDING / NOT_READY / DELIVERY_APPROVED; expliciet
+  menselijk bewijs, reviewer/tijd/snapshot indien goedgekeurd; nooit zelf invullen.
+- Publicatiefase / bevestigde gegevens / open acties (alleen bij delivery).
 
-Een groen script, discovery of plan alleen is nooit FINAL PASS.
+Status- en uitzonderingsbeleid: [Development Standard](../LK-DEVELOPMENT-STANDARD.md#status-en-oplevering).
+Een groen script, discovery of plan alleen is geen technische of menselijke goedkeuring.

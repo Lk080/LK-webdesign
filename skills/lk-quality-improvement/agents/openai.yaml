@@ -1,0 +1,4 @@
+interface:
+  display_name: "LK Quality Improvement"
+  short_description: "Gerichte accessibility, SEO en performance"
+  default_prompt: "Gebruik $lk-quality-improvement voor de passende LK-taak binnen de afgesproken scope."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "LK Visual Review"
+  short_description: "Responsive review en visuele regressies"
+  default_prompt: "Gebruik $lk-visual-review voor de passende LK-taak binnen de afgesproken scope."
