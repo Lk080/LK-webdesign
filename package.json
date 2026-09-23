@@ -7,10 +7,10 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "playwright test",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
-    "test:e2e:report": "playwright show-report",
+    "test": "node scripts/qa-playwright.cjs",
+    "test:e2e": "node scripts/qa-playwright.cjs",
+    "test:e2e:ui": "node scripts/qa-playwright.cjs --ui",
+    "test:e2e:report": "node scripts/qa-show-report.cjs",
     "qa:lighthouse": "node scripts/qa-lighthouse.cjs",
     "qa:lighthouse:lk": "node scripts/qa-lighthouse.cjs lk",
     "qa:lighthouse:kelmora": "node scripts/qa-lighthouse.cjs kelmora",
@@ -19,14 +19,18 @@
     "qa:js": "node scripts/qa-static.cjs js",
     "qa:links": "node scripts/qa-static.cjs links",
     "qa:static": "node scripts/qa-static.cjs all",
-    "qa:visual": "playwright test --config=playwright.visual.config.cjs",
-    "qa:visual:lk": "playwright test --config=playwright.visual.config.cjs --grep \"lk visual reference\"",
-    "qa:visual:kelmora": "playwright test --config=playwright.visual.config.cjs --grep \"kelmora visual reference\"",
-    "qa:visual:update": "playwright test --config=playwright.visual.config.cjs --update-snapshots=all",
+    "qa:visual": "node scripts/qa-playwright.cjs --config=playwright.visual.config.cjs",
+    "qa:visual:lk": "node scripts/qa-playwright.cjs --site lk --config=playwright.visual.config.cjs",
+    "qa:visual:kelmora": "node scripts/qa-playwright.cjs --site kelmora --config=playwright.visual.config.cjs",
+    "qa:visual:update": "node scripts/qa-accept.cjs",
     "qa:visual:index": "node scripts/qa-visual-index.cjs",
     "qa:light": "node scripts/qa-levels.cjs light",
     "qa:medium": "node scripts/qa-levels.cjs medium",
-    "qa:final": "node scripts/qa-levels.cjs final"
+    "qa:final": "node scripts/qa-levels.cjs final",
+    "qa:visual:accept": "node scripts/qa-accept.cjs",
+    "qa:foundation": "node scripts/qa-foundation.cjs",
+    "qa:tooling": "node scripts/qa-tooling.cjs",
+    "qa:unit": "node --test scripts/qa-levels.test.cjs scripts/qa-foundation.test.cjs"
   },
   "repository": {
     "type": "git",

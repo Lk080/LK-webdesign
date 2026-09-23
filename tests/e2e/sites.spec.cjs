@@ -1,8 +1,11 @@
 const { test, expect } = require('./fixtures.cjs');
-const sites = [
-  { name: 'LK Webdesign', path: '/', title: /LK Webdesign/, nav: '#main-nav', ctas: ['.hero-actions a.button', 'header .nav-cta'], target: '#contact' },
-  { name: 'Kelmora', path: '/demos/vakman/', title: /Kelmora Techniek/, nav: '#nav', ctas: ['.hero .button.primary', 'header .header-cta'], target: '#keuzehulp' },
-];
+const { getProject } = require('../../scripts/qa-projects.cjs');
+const adapters = {
+  lk: { title: /LK Webdesign/, nav: '#main-nav', ctas: ['.hero-actions a.button', 'header .nav-cta'], target: '#contact' },
+  kelmora: { title: /Kelmora Techniek/, nav: '#nav', ctas: ['.hero .button.primary', 'header .header-cta'], target: '#keuzehulp' },
+};
+const selected = getProject(process.env.QA_SITE);
+const sites = adapters[selected.id] ? [{ ...adapters[selected.id], name: selected.title, path: selected.route }] : [];
 for (const site of sites) test.describe(site.name, () => {
   test.beforeEach(async ({ page }) => { const response = await page.goto(site.path); expect(response.status()).toBe(200); });
   test('pagina laden en console', async ({ page }) => {

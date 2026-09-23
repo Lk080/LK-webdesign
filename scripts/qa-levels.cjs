@@ -2,12 +2,11 @@
 // Thin orchestration layer: existing tools own assertions; this file never approves a release.
 const fs = require('node:fs');
 const path = require('node:path');
-const os = require('node:os');
 const crypto = require('node:crypto');
 const { spawnSync } = require('node:child_process');
 const root = path.resolve(__dirname, '..');
-const sites = { automotive: { title: 'Automotive', source: 'docs/demos/automotive', frozen: false }, beauty: { title: 'Beauty', source: 'docs/demos/beauty', frozen: false }, lk: { title: 'LK Webdesign', source: 'docs', frozen: false }, kelmora: { title: 'Kelmora', source: 'docs/demos/vakman', frozen: true } };
-const checks = ['smoke', 'functional', 'axe', 'visual', 'html', 'css', 'js', 'links', 'static', 'lighthouse'];
+const { projects: sites, getProject, assertRunnable } = require('./qa-projects.cjs');
+const checks = ['smoke', 'functional', 'axe', 'visual', 'html', 'css', 'js', 'links', 'static', 'lighthouse', 'foundation', 'tooling'];
 function parse(argv) {
   const options = { level: argv[0] };
   if (!['light', 'medium', 'final'].includes(options.level)) throw Error('Level: light, medium of final');
@@ -19,16 +18,16 @@ function parse(argv) {
       options[key.slice(2)] = argv[++i];
     } else throw Error(`Onbekend argument: ${key}`);
   }
-  if (!sites[options.site]) throw Error('Kies expliciet --site lk, --site kelmora, --site beauty of --site automotive. Nieuwe sites pas registreren zodra ze bestaan.');
+  getProject(options.site);
   if (options.run && options.list) throw Error('--run en --list zijn afzonderlijke acties');
   if (options.compare && (options.run || options.list)) throw Error('--compare voert nooit tests uit');
   if (options.level === 'final' && (options.check || options.project || options.grep)) throw Error('Final scope mag niet worden versmald; gebruik light/medium voor een subset');
   if (options.level === 'light' && !options.check) throw Error('LIGHT vereist --check: selecteer de geraakte controle');
-  if (options.run && sites[options.site].frozen) throw Error('Kelmora Final is bevroren. Geen uitvoering via deze workflow zonder nieuwe opdracht en bewuste beleidsaanpassing.');
+  if (options.run) assertRunnable(options.site);
   return options;
 }
 function plan(options) {
-  const selected = options.check ? options.check.split(',') : options.level === 'medium' ? ['functional', 'axe', 'visual', 'links'] : ['functional', 'axe', 'visual', 'static', 'lighthouse'];
+  const selected = options.check ? options.check.split(',') : options.level === 'medium' ? ['functional', 'axe', 'visual', 'links'] : sites[options.site].qa.required;
   if (selected.some(c => !checks.includes(c)) || new Set(selected).size !== selected.length) throw Error('Ongeldige of dubbele --check');
   if (selected.includes('static') && selected.some(c => ['html', 'css', 'js', 'links'].includes(c))) throw Error('static omvat al html, css, js en links');
   if (options.level === 'light' && selected.some(c => ['smoke', 'functional', 'axe', 'visual'].includes(c)) && !options.project) throw Error('LIGHT browsercheck vereist --project mobile, desktop of tablet');
@@ -47,40 +46,26 @@ function plan(options) {
       const escaped = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const grep = query ? `(?=.*${escaped})(?=.*(?:${query}))` : escaped;
       args = ['node_modules/@playwright/test/cli.js', 'test', '--config', visual ? 'playwright.visual.config.cjs' : 'playwright.config.cjs'];
-      if (!visual) args.push(options.site === 'automotive' ? (check === 'axe' ? 'automotive-accessibility.spec.cjs' : 'automotive-flows.spec.cjs') : options.site === 'beauty' ? (check === 'axe' ? 'beauty-accessibility.spec.cjs' : 'beauty-flows.spec.cjs') : check === 'axe' ? 'accessibility.spec.cjs' : 'sites.spec.cjs', ...(check === 'functional' && options.site === 'kelmora' ? ['kelmora-flows.spec.cjs'] : []));
+      if (!visual) args.push(...site.qa.adapters[check === 'axe' ? 'axe' : 'functional']);
       args.push('--grep', grep);
       if (options.level !== 'final' || !visual) {
         for (const p of projects) args.push('--project', visual ? { mobile: 'mobile-standard', desktop: 'desktop', tablet: 'tablet' }[p] : `${p}-chromium`);
       }
-      args.push('--output', `{run}/${check}`, '--reporter', 'list,json');
+      // Output and reporters are owned by the shared scoped Playwright config.
       if (visual) args.push('--update-snapshots=none');
-    } else if (check === 'lighthouse') args = ['scripts/qa-lighthouse.cjs', options.site];
+    } else if (check === 'foundation' || check === 'tooling') args = [`scripts/qa-${check}.cjs`, options.site];
+    else if (check === 'lighthouse') args = ['scripts/qa-lighthouse.cjs', options.site];
     else args = ['scripts/qa-static.cjs', check === 'static' ? 'all' : check, options.site];
     return { check, args };
   });
   return jobs;
 }
 function fingerprint(options, jobs) {
-  const paths = [];
-  function walk(dir) {
-    for (const entry of fs.readdirSync(path.join(root, dir), { withFileTypes: true })) {
-      const file = `${dir}/${entry.name}`;
-      if (options.site === 'lk' && file === 'docs/demos') continue;
-      if (entry.isSymbolicLink()) throw Error(`Symlink niet opgenomen in reuse-scope: ${file}`);
-      if (entry.isDirectory()) walk(file); else paths.push(file);
-    }
-  }
-  walk(sites[options.site].source);
-  walk('scripts'); walk('tests');
-  for (const file of ['package.json', 'package-lock.json', 'playwright.config.cjs', 'playwright.visual.config.cjs', '.htmlhintrc', 'eslint.config.cjs', 'stylelint.config.mjs']) paths.push(file);
-  const hash = crypto.createHash('sha256');
-  for (const file of paths.sort()) hash.update(file).update(fs.readFileSync(path.join(root, file)));
-  process.env.PLAYWRIGHT_BROWSERS_PATH = path.join(root, '.cache/ms-playwright');
-  const executable = require('playwright').chromium.executablePath();
-  const binary = fs.statSync(executable);
-  const environment = { node: process.version, platform: process.platform, architecture: process.arch, os: os.release(), timezone: Intl.DateTimeFormat().resolvedOptions().timeZone, browser: { executable, size: binary.size, modified: binary.mtimeMs }, packages: Object.fromEntries(['@playwright/test', '@axe-core/playwright', 'lighthouse'].map(p => [p, JSON.parse(fs.readFileSync(path.join(root, 'node_modules', p, 'package.json'), 'utf8')).version])) };
-  hash.update(JSON.stringify({ level: options.level, site: options.site, jobs, environment }));
-  return { hash: hash.digest('hex'), files: paths.length, environment };
+  const state = require('./qa-state.cjs').snapshot(options.site);
+  const hash = crypto.createHash('sha256')
+    .update(JSON.stringify({ state, level: options.level, site: options.site, jobs }))
+    .digest('hex');
+  return { hash, ...state };
 }
 function main(argv) {
   const options = parse(argv);
@@ -89,8 +74,8 @@ function main(argv) {
   if (!options.run && !options.list && !options.compare) return;
   if (options.list) {
     for (const job of jobs.filter(j => j.args[0].includes('playwright'))) {
-      const args = job.args.slice(0, job.args.indexOf('--output'));
-      const result = spawnSync(process.execPath, [...args, '--list', '--reporter=list'], { cwd: root, stdio: 'inherit' });
+      const args = job.args;
+      const result = spawnSync(process.execPath, [...args, '--list', '--reporter=list'], { cwd: root, stdio: 'inherit', env: { ...process.env, QA_SITE: options.site, QA_CHECK: job.check } });
       if (result.error || result.status !== 0) throw Error(`Discovery mislukt: ${job.check}`);
     }
     console.log('Alleen testdiscovery; GEEN PASS-bewijs en geen browser gestart.');
@@ -104,22 +89,25 @@ function main(argv) {
     process.exitCode = matches ? 0 : 1;
     return;
   }
-  const run = fs.mkdtempSync(path.join(ensureRuns(), `${options.site}-${options.level}-`));
+  const run = require('./qa-run.cjs').createRun(options.site, options.level).dir;
   const record = { schema: 1, started: new Date().toISOString(), level: options.level, site: options.site, source, commit: spawnSync('git', ['rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).stdout?.trim(), jobs, status: 'RUNNING', results: [], manualReview: 'PENDING — geen FINAL QUALITY GATE PASS door dit script' };
   const save = () => fs.writeFileSync(path.join(run, 'record.json'), JSON.stringify(record, null, 2));
   save();
   for (const job of jobs) {
     const args = job.args.map(a => a.replace('{run}', run));
-    const result = spawnSync(process.execPath, args, { cwd: root, stdio: 'inherit', env: { ...process.env, QA_STATIC_OUTPUT: path.join(run, 'static'), PLAYWRIGHT_JSON_OUTPUT_FILE: path.join(run, `${job.check}.json`) } });
+    const result = spawnSync(process.execPath, args, { cwd: root, stdio: 'inherit', env: { ...process.env, QA_RUN_DIR: run, QA_SITE: options.site, QA_CHECK: job.check } });
     record.results.push({ check: job.check, exitCode: result.status ?? 1, error: result.error?.message, finished: new Date().toISOString() });
     save();
   }
   record.status = record.results.every(r => r.exitCode === 0) ? 'CHECKS_COMPLETED' : 'CHECKS_FAILED';
   if (fingerprint(options, jobs).hash !== source.hash) record.status = 'SOURCE_CHANGED_DURING_RUN';
-  record.finished = new Date().toISOString(); save();
-  console.log(`Bewijs: ${path.relative(root, run)}/record.json\n${record.status}; menselijke review en dekking blijven vereist. Lighthouse-exitcode bewijst geen targets.`);
+  record.finished = new Date().toISOString();
+  const evidence = require('./qa-evidence.cjs').finish(require('./qa-run.cjs').loadRun(run, options.site), jobs, record.results);
+  if (evidence.errors.length) record.status = 'CHECKS_FAILED';
+  record.evidence = 'evidence.json';
+  save();
+  console.log(`Bewijs: ${path.relative(root, run)}/record.json\n${record.status}; menselijke review en dekking blijven vereist. Technische dekking staat in evidence.json; owner-review blijft afzonderlijk.`);
   process.exitCode = record.status === 'CHECKS_COMPLETED' ? 0 : 1;
 }
-function ensureRuns() { const dir = path.join(root, 'test-results/qa-runs'); fs.mkdirSync(dir, { recursive: true }); return dir; }
 if (require.main === module) { try { main(process.argv.slice(2)); } catch (error) { console.error(error.message); process.exitCode = 1; } }
 module.exports = { parse, plan, fingerprint };

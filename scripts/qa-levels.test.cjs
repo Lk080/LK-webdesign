@@ -19,7 +19,7 @@ test('medium does not silently include Lighthouse or all viewports', () => {
 });
 test('final cannot be narrowed and includes all necessary tool categories', () => {
   const jobs = build(['final', '--site', 'lk']);
-  assert.deepEqual(jobs.map(j => j.check), ['functional', 'axe', 'visual', 'static', 'lighthouse']);
+  assert.deepEqual(jobs.map(j => j.check), require('./qa-projects.cjs').projects.lk.qa.required);
   assert(!jobs.find(j => j.check === 'visual').args.includes('--project'));
   assert.throws(() => build(['final', '--site', 'lk', '--check', 'smoke']));
 });
@@ -27,7 +27,7 @@ test('unsafe or ambiguous selection fails before execution', () => {
   for (const args of [
     ['light', '--site', 'lk'],
     ['light', '--site', 'lk', '--check', 'axe'],
-    ['medium', '--site', 'beauty'],
+    ['medium', '--site', 'unknown'],
     ['light', '--site', 'lk', '--check', 'static,html'],
     ['medium', '--site', 'lk', '--project', 'tablet'],
     ['final', '--site', 'kelmora', '--run'],

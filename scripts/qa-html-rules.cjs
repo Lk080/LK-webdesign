@@ -10,6 +10,8 @@ module.exports = HTMLHint => HTMLHint.addRule({
         (blocks.has(tag) && stack.includes('p')) ||
         (['ul', 'ol'].includes(parent) && !['li', 'script', 'template'].includes(tag));
       if (problem) reporter.error(`Invalid nesting: <${tag}> inside <${parent}>.`, e.line, e.col, this, e.raw);
+      // Control characters are deliberately rejected in HTML attribute names.
+      // eslint-disable-next-line no-control-regex
       for (const attr of e.attrs) if (/[\s"'<>/=\x00-\x1f]/.test(attr.name)) reporter.error(`Invalid attribute name: ${attr.name}`, e.line, e.col, this, e.raw);
       if (!voids.has(tag) && !e.close) stack.push(tag);
     });

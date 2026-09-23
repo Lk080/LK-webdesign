@@ -9,6 +9,7 @@ async function scanAccessibility(page, testInfo, website, state) {
   await page.evaluate(() => document.fonts.ready);
   const results = await new AxeBuilder({ page }).withRules(rules).analyze();
   const report = {
+    metadata: { ...testInfo.config.metadata, check: 'axe' },
     website, viewport: testInfo.project.name, state, axeVersion: results.testEngine.version,
     counts: Object.fromEntries(['critical', 'serious', 'moderate', 'minor'].map(impact => [impact, results.violations.filter(v => v.impact === impact).length])),
     violations: results.violations.map(v => ({

@@ -1,9 +1,7 @@
 const { test, expect } = require('./fixtures.cjs');
 const { scanAccessibility, assertAccessibility } = require('./accessibility-helper.cjs');
-const sites = [
-  { name: 'LK Webdesign', path: '/' },
-  { name: 'Kelmora', path: '/demos/vakman/' },
-];
+const selected = require('../../scripts/qa-projects.cjs').getProject(process.env.QA_SITE);
+const sites = [{ name: selected.title, path: selected.route }];
 for (const site of sites) {
   test(`${site.name} accessibility WCAG 2.1 AA`, async ({ page, isMobile }, testInfo) => {
     test.setTimeout(60000);

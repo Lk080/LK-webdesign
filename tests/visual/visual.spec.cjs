@@ -1,8 +1,8 @@
 const { test, expect } = require('@playwright/test');
 const fs = require('node:fs/promises');
-const path = require('node:path');
-const manifest = require('./assets/manifest.json');
-const sites = require('./sites.cjs');
+const { playwrightRoute } = require('../../scripts/qa-network.cjs');
+const sites = require('./sites.cjs').filter(s => s.id === process.env.QA_SITE);
+require('../../scripts/qa-projects.cjs').assertRunnable(process.env.QA_SITE);
 for (const site of sites) test(`${site.id} visual reference and layout`, async ({ page, context }, testInfo) => {
   const errors = [], blocked = [];
   await context.route('**/*', async route => {
@@ -11,12 +11,7 @@ for (const site of sites) test(`${site.id} visual reference and layout`, async (
       blocked.push(request.url()); return route.abort('blockedbyclient');
     }
     if (url.origin === 'http://127.0.0.1:4173' && url.pathname === '/__qa_visual.css') return route.fulfill({ contentType: 'text/css', body: '*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important;scroll-behavior:auto!important}' });
-    if (manifest[request.url()]) {
-      const resource = manifest[request.url()];
-      return route.fulfill({ contentType: resource.contentType, body: await fs.readFile(path.join(__dirname, 'assets', resource.file)) });
-    }
-    if (url.origin !== 'http://127.0.0.1:4173') { errors.push(`Uncached external resource: ${request.url()}`); return route.abort(); }
-    return route.continue();
+    return playwrightRoute(route, site.id, blocked);
   });
   page.on('pageerror', e => errors.push(e.message));
   const response = await page.goto(site.path);
@@ -42,7 +37,7 @@ for (const site of sites) test(`${site.id} visual reference and layout`, async (
       badImages: [...document.images].filter(img => img.getClientRects().length && (!img.naturalWidth || rect(img).width <= 0 || rect(img).height <= 0)).map(img => img.src),
     };
   }, site.components);
-  await fs.writeFile(testInfo.outputPath('layout.json'), JSON.stringify({ site: site.name, viewport: testInfo.project.name, ...layout }, null, 2));
+  await fs.writeFile(testInfo.outputPath('layout.json'), JSON.stringify({ metadata: testInfo.config.metadata, site: site.name, viewport: testInfo.project.name, ...layout }, null, 2));
   await testInfo.attach('layout', { path: testInfo.outputPath('layout.json'), contentType: 'application/json' });
   expect.soft(layout.overflow, 'Document horizontal overflow').toBeLessThanOrEqual(1);
   expect.soft(layout.badImages, 'Visible images must load and have dimensions').toEqual([]);
@@ -54,11 +49,12 @@ for (const site of sites) test(`${site.id} visual reference and layout`, async (
   async function capture(name, locator) {
     await page.evaluate(() => scrollTo(0, 0));
     const filename = `${site.id}-${name}.png`;
-    if (locator) await expect.soft(locator).toHaveScreenshot(filename);
-    else await expect.soft(page).toHaveScreenshot(filename, { fullPage: true });
     const actual = testInfo.outputPath(filename);
-    if (locator) await locator.screenshot({ path: actual, animations: 'disabled', caret: 'hide' });
-    else await page.screenshot({ path: actual, fullPage: true, animations: 'disabled', caret: 'hide' });
+    const buffer = locator
+      ? await locator.screenshot({ animations: 'disabled', caret: 'hide' })
+      : await page.screenshot({ fullPage: true, animations: 'disabled', caret: 'hide' });
+    await fs.writeFile(actual, buffer);
+    expect.soft(buffer).toMatchSnapshot(filename, { threshold: 0, maxDiffPixels: 0 });
     screenshots.push({ name, file: filename });
   }
   await capture('full-page');
@@ -82,7 +78,8 @@ for (const site of sites) test(`${site.id} visual reference and layout`, async (
     const hit = await control.evaluate(e => { const r=e.getBoundingClientRect(); const hit=document.elementFromPoint(r.x+r.width/2,r.y+r.height/2); return hit===e || e.contains(hit); });
     expect.soft(hit, `${selector} usable, not clipped/covered`).toBe(true);
   }
-  await fs.writeFile(testInfo.outputPath('screenshots.json'), JSON.stringify({ site: site.name, viewport: testInfo.project.name, screenshots }, null, 2));
+  await fs.writeFile(testInfo.outputPath('screenshots.json'), JSON.stringify({ metadata: testInfo.config.metadata, site: site.name, viewport: testInfo.project.name, screenshots }, null, 2));
   await testInfo.attach('network', { body: JSON.stringify({ blocked, errors }), contentType: 'application/json' });
+  expect(blocked.filter(event => event.action === 'reject')).toEqual([]);
   expect(errors).toEqual([]);
 });

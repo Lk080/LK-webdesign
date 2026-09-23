@@ -1,49 +1,16 @@
-# Static code quality en lokale links
+# Static QA
 
-Workflow en gerichte uitvoering: [LK Development Standard V2](../LK-DEVELOPMENT-STANDARD.md).
+Gebruik de centrale [foundation-afspraken](QA-FOUNDATION.md) en projectregistratie.
+`node scripts/qa-static.cjs <html|css|js|links|all> <project-id>` vereist een expliciet,
+niet-bevroren project. Elke uitvoering krijgt unieke output met run/projectmetadata.
 
-- `npm run qa:html`: HTMLHint met centrale `.htmlhintrc` en aanvullende gerichte nestingregel.
-- `npm run qa:css`: Stylelint met `stylelint-config-standard` als basis.
-- `npm run qa:js`: ESLint 10 flat config, recommended fouten en expliciete browserglobals.
-- `npm run qa:links`: Linkinator, interne pagina's/anchors/assets/CSS-URLs.
-- `npm run qa:static`: alle vier achtereenvolgens, ook als een lintcontrole bevindingen heeft.
-- `node scripts/qa-static-report.cjs`: leesbaar compleet rapport van de laatste vier controles.
+ERROR blokkeert; WARNING/INFO blijven zichtbaar. HTMLHint is geen volledige HTML-
+conformancevalidator; dynamische states blijven Playwright/Axe-werk. Stylelint bewaart
+syntax/semantiek en rapporteert cascade-/duplicatiewarnings. Linkinator bezoekt alleen
+lokale URLs in projectscope en volgt geen redirects. Buiten-scope links zijn INFO,
+geen bereikbaarheid-PASS. Geen fixes of formulierinzendingen.
 
-Geen fixes. ERROR geeft exitcode 1; WARNING/INFO blijven zichtbaar zonder de
-run te blokkeren. Runtime/configuratiefouten geven ook exitcode 1. Ruwe en
-geclassificeerde resultaten staan in `test-results/static/*.json`; het leesbare
-rapport staat in `test-results/static/report.md`.
-
-Scope: eigen `.html`, `.css`, `.js` onder `docs`, momenteel 2 HTML, 2 CSS en 5 JS.
-Geen vendorcode aangetroffen. `vendor`, `vendors`, `*.min.js`, `*.min.css`,
-node_modules, caches en gegenereerde rapporten uitgesloten. QA-scripts/tests
-zijn Node-code en vallen niet onder de browser-JavaScriptconfig. Inline JSON-LD
-is geen JavaScript-lintdoel. Dynamisch opgebouwde HTML blijft aanvullend werk
-voor browser-/accessibilitytests; HTMLHint is geen volledige HTML-validator.
-
-Stylelint: de standard-basis blijft aanwezig, maar cosmetische regels zoals
-kleur-/quote-notatie, naamconventies, witregels en vendor-prefixnormalisatie
-zijn uitgezet. Cascadevolgorde en herhaalde selectors zijn warnings, aangezien
-bewuste component-/responsive-overrides mogelijk zijn. Ontbrekende generieke
-font-fallbacks zijn kwaliteitswarnings. Geen selectors of websitebestanden
-zijn specifiek uitgezonderd om bestaande resultaten te verbergen.
-
-HTMLHint tags-check defaults zijn aangepast om onnodige title-attributen en
-XHTML-selfclosing niet te eisen. input-requires-label is niet geactiveerd omdat
-deze versie correcte impliciete labels niet herkent; Axe blijft daarvoor actief.
-
-Linkinator gebruikt de bestaande server op 127.0.0.1:4173. De runner start/stopt
-zijn eigen server en hergebruikt geen proces op een bezette poort. Linkinator
-krijgt checkFragments/checkCss; externe origins worden vóór het opvragen
-uitgesloten. Redirects worden niet gevolgd, zodat een lokale redirect nooit
-onbedoeld naar een externe dienst leidt. Alleen GET/HEAD-controles, geen
-formulierbediening. Externe URL's blijven netwerkafhankelijke INFO-inventaris,
-geen PASS-claim over bereikbaarheid. Formspree wordt nooit aangevraagd.
-
-Nieuwe websitebestanden onder docs worden automatisch gelint. Breid voor een
-nieuwe linkcrawl de sitelijst in qa-static.cjs uit wanneer de site bestaat.
-
-Functionele regressiecheck met behoud van de rapportmappen:
-`npm run test:e2e -- sites.spec.cjs --output=test-results/functional`
-Een gewone `npm test` kan standaard test-results opschonen; bewaar belangrijke
-rapporten vooraf. Bestaande Axe- en Lighthouseconfiguratie blijft ongewijzigd.
+`node scripts/qa-static-report.cjs <run-directory> <project-id>` leest uitsluitend
+bijbehorende metadata. `qa:foundation` voegt SEO/publicatiefase/JSON-LD/assets toe;
+`qa:tooling` lint onderhouden Node-test-/helpercode. Aantallen en sites komen uit
+configuratie en reports, niet uit deze documentatie.

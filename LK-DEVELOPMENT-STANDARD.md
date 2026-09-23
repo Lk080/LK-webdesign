@@ -7,10 +7,9 @@ Pas na een bewezen finale PASS volgt een afzonderlijk geautoriseerd Git-checkpoi
 Na PASS stoppen; geen extra experimenten zonder nieuwe opdracht.
 
 Kelmora is bevroren op `4c8674f629e4c4e78dd4571bba6b4fbd0609fb9a`.
-Wijzig of hertest Kelmora niet zonder nieuwe opdracht. De V2-runner weigert
-`--run --site kelmora`; plannen/discovery kunnen wel. Geen wijziging aan de
-onderliggende kwaliteitsregels. Beauty/Automotive worden pas geregistreerd
-wanneer ze bestaan en krijgen een eigen identiteit, geen Kelmora-kopie.
+Wijzig of hertest Kelmora niet zonder nieuwe opdracht. Alle ondersteunde runners
+handhaven de centrale freeze. Registratie, runscope, bewijs en veilige commands staan
+in [LK Development Environment foundation](scripts/QA-FOUNDATION.md).
 
 ## Drie niveaus
 
@@ -70,7 +69,7 @@ npm run qa:final -- --site lk
 npm run qa:final -- --site lk --list
 ```
 
-`--check`: smoke, functional, axe, visual, html, css, js, links, static, lighthouse.
+`--check`: smoke, functional, axe, visual, html, css, js, links, static, foundation, tooling, lighthouse.
 LIGHT vereist een expliciete check; browserchecks vereisen een viewport.
 MEDIUM is te versmallen op impact. FINAL accepteert geen check/project/grep-filter.
 `--grep` is een regex voor functionele testnamen, gecombineerd met de sitefilter.
@@ -82,21 +81,16 @@ Een LIGHT `visual` controleert dus de hele referentieset van **één viewport**.
 Voor één component is een gerichte browserinspectie/screenshot goedkoper; er is
 bewust geen nieuwe screenshot-app of tweede baseline-infrastructuur gebouwd.
 
-Bestaande npm-commando's blijven beschikbaar voor specialistisch gebruik. `npm test`
-is breed en kan `test-results` opruimen. Gebruik V2 voor geïsoleerde rapportmappen:
-`test-results/qa-runs/<site-level-id>/record.json`, per-check JSON/artifacts.
-Lighthouse houdt zijn bestaande unieke timestampmap. V2 wijzigt geen baselines.
-`qa-static.cjs <mode> [lk|kelmora]` ondersteunt nu sitescope; zonder site blijft het
-oude gedrag behouden. Scope-lint raakt geen andere demo's; linkcrawl slaat URLs
-buiten de gekozen site over. Overgeslagen links zijn geen bereikbaarheid-PASS.
+Alle uitvoeringen vereisen een expliciet project en schrijven naar een unieke
+runmap. Rapportage gebruikt run/projectmetadata; historische resultaten worden niet
+automatisch gemengd. Zie de foundation-documentatie voor directe ingangen.
 
 ## PASS-hergebruik: bewijs, geen aanname
 
 Bewaar scope, tijd, commit én hash van de ongecommitte bronstaat, testconfig/deps,
 browser/OS, uitkomst, bewijsbestanden, handmatige review en retest-triggers.
 De runner schrijft dit automatisch voor zijn runs. Een exitcode nul heet bewust
-`CHECKS_COMPLETED`, niet FINAL PASS. Lighthouse-exitcode bewijst geen scoretargets;
-lees rapporten. Een onderbroken run blijft RUNNING en is niet herbruikbaar.
+`CHECKS_COMPLETED`, niet FINAL PASS. Lighthouse-targets worden machineleesbaar beoordeeld; lees ook de diagnostiek. Een onderbroken run blijft RUNNING en is niet herbruikbaar.
 
 ```sh
 npm run qa:light -- --site lk --check html --compare test-results/qa-runs/<run>/record.json
@@ -127,9 +121,8 @@ Baselines zijn goedgekeurde referenties, geen manier om fouten weg te werken.
 Bij verschil: oorzaak → visuele review → intended/regression → alleen bedoelde
 betrokken referentie bijwerken → normale vergelijking **zonder update**. Houd
 oude referenties beschikbaar totdat review klaar is. Nooit een brede update als
-reactie op falende tests. Het legacy `qa:visual:update` vernieuwt breed en hoort
-niet in deze V2-workflow. Gebruik zo nodig een expliciet gefilterde bestaande
-Playwright-aanroep; ook `--update-snapshots=changed` keurt een verschil niet goed.
+reactie op falende tests. `qa:visual:update` en `qa:visual:accept` vereisen nu expliciet reviewbewijs en exacte
+artifact-hashes; browsers kunnen geen referenties meer bijwerken.
 Kelmora-referenties blijven bevroren. LK-referenties zijn visuele regressiereferenties,
 geen verklaring dat LK al dezelfde finale kwaliteitsstatus heeft.
 
@@ -159,3 +152,6 @@ inzendingen via QA. Testgegevens zijn fictief.
 
 Alleen werkelijke dekking met bewijs mag tot `FINAL QUALITY GATE: PASS` leiden.
 Daarna STOP. Commit/push uitsluitend op afzonderlijke toestemming.
+
+De technische gate en menselijke goedkeuring zijn afzonderlijke statussen; gewone
+QA maakt nooit DELIVERY_APPROVED. Publicatiestatus staat daarvan los.
