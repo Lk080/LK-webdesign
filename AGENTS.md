@@ -4,6 +4,9 @@
 - Lees de relevante regels in [Development Standard](LK-DEVELOPMENT-STANDARD.md);
   gebruik de projectregistratie voor scope/freeze. Wijzig of hertest frozen projecten
   alleen na expliciete heropening; omzeil geen guards.
+- Gebruik voor LK Final de goedgekeurde commerciële regels uit
+  [Commercial Requirements](LK-COMMERCIAL-REQUIREMENTS.md); legacywebsitecopy is
+  geen commerciële bron. Dit geeft geen toestemming voor volgende bouwslices.
 - Gebruik de bestaande stack/conventies; geen ongevraagde dependencies of migraties.
 - Werk mobile-first bij nieuwe frontends. Neem toegankelijkheid, performance, SEO
   en security/privacy mee waar de wijziging die raakt.

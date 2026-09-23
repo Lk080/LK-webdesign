@@ -11,6 +11,7 @@ bewijs opnieuw te produceren. De technische gate en owner-goedkeuring zijn apart
 |---|---|
 | [AGENTS.md](AGENTS.md) | Korte, vrijwel altijd geldende werk- en veiligheidsregels |
 | Deze Standard | Kwaliteitsniveaus, impact, bewijs, uitzonderingen, delivery en skill-routing |
+| [Commercial Requirements](LK-COMMERCIAL-REQUIREMENTS.md) | Goedgekeurde commerciële regels van LK Final en open pre-launch bedrijfschecks |
 | [Projectregistratie](scripts/qa-projects.json) | Projectidentiteit, scope, freeze, publicatiefase, capabilities, adapters, targets/budgetten en vereiste dekking |
 | [Foundation](scripts/QA-FOUNDATION.md) | Technische API/commandcontracten, artifacts, netwerkguards en acceptatiemechaniek |
 | [QA-resultaattemplate](tests/QA-RESULT-TEMPLATE.md) | Rapportvorm; geen eigen kwaliteitsbeleid |
@@ -18,7 +19,7 @@ bewijs opnieuw te produceren. De technische gate en owner-goedkeuring zijn apart
 
 Lees per taak alleen de benodigde bron/sectie. Bij tegenspraak: benoem het concrete
 conflict en volg geen verouderde kopie. De registry is de enige eigenaar van actuele
-freeze-status en projectwaarden. Frozen werk niet aanpassen/hertesten zonder expliciete
+freeze-status en technische projectwaarden. Frozen werk niet aanpassen/hertesten zonder expliciete
 heropening; guards niet omzeilen. Historisch bewijs mag read-only worden geraadpleegd.
 
 ## Algemene developmentprincipes
