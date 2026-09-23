@@ -6,7 +6,7 @@ const os = require('node:os');
 const crypto = require('node:crypto');
 const { spawnSync } = require('node:child_process');
 const root = path.resolve(__dirname, '..');
-const sites = { beauty: { title: 'Beauty', source: 'docs/demos/beauty', frozen: false }, lk: { title: 'LK Webdesign', source: 'docs', frozen: false }, kelmora: { title: 'Kelmora', source: 'docs/demos/vakman', frozen: true } };
+const sites = { automotive: { title: 'Automotive', source: 'docs/demos/automotive', frozen: false }, beauty: { title: 'Beauty', source: 'docs/demos/beauty', frozen: false }, lk: { title: 'LK Webdesign', source: 'docs', frozen: false }, kelmora: { title: 'Kelmora', source: 'docs/demos/vakman', frozen: true } };
 const checks = ['smoke', 'functional', 'axe', 'visual', 'html', 'css', 'js', 'links', 'static', 'lighthouse'];
 function parse(argv) {
   const options = { level: argv[0] };
@@ -19,7 +19,7 @@ function parse(argv) {
       options[key.slice(2)] = argv[++i];
     } else throw Error(`Onbekend argument: ${key}`);
   }
-  if (!sites[options.site]) throw Error('Kies expliciet --site lk, --site kelmora of --site beauty. Nieuwe sites pas registreren zodra ze bestaan.');
+  if (!sites[options.site]) throw Error('Kies expliciet --site lk, --site kelmora, --site beauty of --site automotive. Nieuwe sites pas registreren zodra ze bestaan.');
   if (options.run && options.list) throw Error('--run en --list zijn afzonderlijke acties');
   if (options.compare && (options.run || options.list)) throw Error('--compare voert nooit tests uit');
   if (options.level === 'final' && (options.check || options.project || options.grep)) throw Error('Final scope mag niet worden versmald; gebruik light/medium voor een subset');
@@ -47,7 +47,7 @@ function plan(options) {
       const escaped = title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       const grep = query ? `(?=.*${escaped})(?=.*(?:${query}))` : escaped;
       args = ['node_modules/@playwright/test/cli.js', 'test', '--config', visual ? 'playwright.visual.config.cjs' : 'playwright.config.cjs'];
-      if (!visual) args.push(options.site === 'beauty' ? (check === 'axe' ? 'beauty-accessibility.spec.cjs' : 'beauty-flows.spec.cjs') : check === 'axe' ? 'accessibility.spec.cjs' : 'sites.spec.cjs', ...(check === 'functional' && options.site === 'kelmora' ? ['kelmora-flows.spec.cjs'] : []));
+      if (!visual) args.push(options.site === 'automotive' ? (check === 'axe' ? 'automotive-accessibility.spec.cjs' : 'automotive-flows.spec.cjs') : options.site === 'beauty' ? (check === 'axe' ? 'beauty-accessibility.spec.cjs' : 'beauty-flows.spec.cjs') : check === 'axe' ? 'accessibility.spec.cjs' : 'sites.spec.cjs', ...(check === 'functional' && options.site === 'kelmora' ? ['kelmora-flows.spec.cjs'] : []));
       args.push('--grep', grep);
       if (options.level !== 'final' || !visual) {
         for (const p of projects) args.push('--project', visual ? { mobile: 'mobile-standard', desktop: 'desktop', tablet: 'tablet' }[p] : `${p}-chromium`);
