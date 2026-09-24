@@ -22,6 +22,45 @@ conflict en volg geen verouderde kopie. De registry is de enige eigenaar van act
 freeze-status en technische projectwaarden. Frozen werk niet aanpassen/hertesten zonder expliciete
 heropening; guards niet omzeilen. Historisch bewijs mag read-only worden geraadpleegd.
 
+## Efficiënte taakuitvoering
+
+- **Model-routing (adviserend):** gebruik GPT-6 Sol voor complexe architectuur,
+  moeilijke debugging, belangrijke design/art-directionbeslissingen, complexe
+  businesslogica, securityredenering en finale high-stakes reviews. Gebruik GPT-6
+  Luna waar beschikbaar voor duidelijke, afgebakende, high-volume taken zoals
+  repositoryverkenning, eenvoudige HTML/CSS/copy-edits, testlog-triage en
+  bestandsanalyse wanneer zwaardere reasoning aantoonbaar weinig toevoegt.
+  Kies nooit automatisch lichter bij ambiguïteit, risico of kwaliteitskritisch werk.
+  Controleer beschikbaarheid in de actieve Codex-omgeving; deze voorkeur wijzigt
+  geen modelconfiguratie en verlaagt nooit QA-, security- of reviewvereisten.
+- **Worktree-routing:** overweeg standaard een geïsoleerde Git worktree voor
+  QA/toolingexperimenten, dependency-/configuratieproeven, toekomstige Website
+  Engine-prototypes, risicovolle refactors en alternatieve implementaties die niet
+  in de actieve working tree hoeven plaats te vinden. Geen worktree zonder reden
+  voor kleine normale websitewijzigingen. Leg startpunt, bestandseigenaarschap en
+  integratiemoment vast; agents/worktrees wijzigen nooit ongecoördineerd dezelfde
+  websitebestanden. Bescherm ongecommitte user work: niet resetten, stashen of
+  overschrijven om een experiment mogelijk te maken. Een worktree bevat dat werk
+  niet vanzelf; neem benodigde lokale wijzigingen alleen bewust en zonder de
+  actieve workspace te wijzigen mee. Isolatie verleent geen extra toestemming
+  voor dependencies, commits, pushes of andere side effects.
+- **Prompt/context:** repositoryregels blijven source of truth. Taakprompts
+  beschrijven vooral scope, doel, uitzonderingen en gewenste output; kopieer de
+  Development Standard of Commercial Requirements niet in iedere prompt.
+  Zoek eerst de relevante sectie; lees geen volledig groot document als die
+  sectie volstaat. Volg de bestaande skill-routing en PASS-hergebruikregels hieronder.
+- **Optioneel gebruiksinzicht:** in een ondersteunde Codex CLI-sessie toont
+  `/usage` accountverbruik; `/status` toont sessiegebruik en resterende context.
+  Gebruik dit naar behoefte bij zware sessies, nooit verplicht per taak. Dit is
+  geen bevestiging dat `/usage` in iedere desktopversie beschikbaar is.
+- **Toekomstige kandidaat: `LK completion guard`.** Pas ontwerpen nadat LK Final
+  voldoende echte workflowdata heeft opgeleverd. Nu geen automatische QA- of
+  completion hooks; later nooit iedere kleine wijziging automatisch naar FULL QA.
+
+Productreferenties: [modelnamen](https://developers.openai.com/api/docs/models) en
+[CLI-gebruikscommando's](https://learn.chatgpt.com/docs/developer-commands?surface=cli).
+Beschikbaarheid in het account/de actieve client moet afzonderlijk worden vastgesteld.
+
 ## Algemene developmentprincipes
 
 Een nieuwe klantfrontend begint bij doelgroep, aanbod en primaire bezoekersactie.
