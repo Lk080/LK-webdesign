@@ -1,0 +1,87 @@
+{
+  "note": "Derived from existing historical screenshots; no demo recapture, source edit or baseline acceptance. Crop/resize/compression only. No current QA claim.",
+  "assets": [
+    {
+      "file": "kelmora-hero-720.webp",
+      "width": 720,
+      "height": 410,
+      "bytes": 29024,
+      "source": "tests/visual/baselines/desktop/kelmora-hero.png",
+      "sourceSHA256": "c65bb10e53ea9c24740dadaf0478136aacc2e15dffb3903768e0bbd9481caaa5",
+      "crop": [
+        0,
+        0,
+        1440,
+        820
+      ]
+    },
+    {
+      "file": "kelmora-hero-1440.webp",
+      "width": 1440,
+      "height": 820,
+      "bytes": 82140,
+      "source": "tests/visual/baselines/desktop/kelmora-hero.png",
+      "sourceSHA256": "c65bb10e53ea9c24740dadaf0478136aacc2e15dffb3903768e0bbd9481caaa5",
+      "crop": [
+        0,
+        0,
+        1440,
+        820
+      ]
+    },
+    {
+      "file": "kelmora-services-720.webp",
+      "width": 720,
+      "height": 378,
+      "bytes": 36788,
+      "source": "tests/visual/baselines/desktop/kelmora-diensten.png",
+      "sourceSHA256": "d363864d6e57f09192398ab3761fd184acf1a27735973337c2e82950483868a5",
+      "crop": [
+        72,
+        115,
+        1368,
+        795
+      ]
+    },
+    {
+      "file": "kelmora-services-1296.webp",
+      "width": 1296,
+      "height": 680,
+      "bytes": 86014,
+      "source": "tests/visual/baselines/desktop/kelmora-diensten.png",
+      "sourceSHA256": "d363864d6e57f09192398ab3761fd184acf1a27735973337c2e82950483868a5",
+      "crop": [
+        72,
+        115,
+        1368,
+        795
+      ]
+    },
+    {
+      "file": "kelmora-services-mobile.webp",
+      "width": 390,
+      "height": 655,
+      "bytes": 36514,
+      "source": "tests/visual/baselines/mobile-standard/kelmora-diensten.png",
+      "sourceSHA256": "89e3e0f12456b4be2696f5566156e4251838e6f00e1bdbfe6e4d9b4d08c7ffb1",
+      "crop": [
+        0,
+        35,
+        390,
+        690
+      ]
+    },
+    {
+      "file": "velune-preview.jpg",
+      "source": "tests/visual/baselines/desktop/beauty-hero.png",
+      "sourceSHA256": "a9b52f26985e29937e5788d1c8432651e0d42e09beba9a92f5bb4b427b606a40",
+      "operation": "Existing approved reference resized to 960px maximum dimension; JPEG quality 82. No demo recapture or QA claim."
+    },
+    {
+      "file": "avren-preview.jpg",
+      "source": "tests/visual/baselines/desktop/automotive-hero.png",
+      "sourceSHA256": "5b2e2440ca6d3cea0481df559fef448e8c2d5e58b8bb6dc8ebf7db939e49a0df",
+      "operation": "Existing approved reference resized to 960px maximum dimension; JPEG quality 82. No demo recapture or QA claim."
+    }
+  ]
+}

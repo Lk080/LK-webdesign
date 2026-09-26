@@ -1,6 +1,7 @@
 (() => {
   'use strict';
   const form = document.getElementById('contact-form');
+  if (!form) return;
   const button = document.getElementById('send-request');
   const status = document.getElementById('form-status');
   // Public Formspree endpoint only. Never place account/API secrets in this file.
@@ -13,6 +14,15 @@
     button.disabled = !configured || sending;
   }
   syncSubmitButton();
+  const extra = document.getElementById('contact-extra');
+  function revealRelevantFields() {
+    if (document.getElementById('interest').value === window.LKCommercial.types.existing) extra.open = true;
+  }
+  revealRelevantFields();
+  form.addEventListener('change', revealRelevantFields);
+  form.addEventListener('focusin', revealRelevantFields);
+  window.addEventListener('lk:contact-context', revealRelevantFields);
+  form.addEventListener('reset', () => { extra.open = false; });
   // Reconcile a restored button state without unlocking an active request.
   window.addEventListener('pageshow', syncSubmitButton);
   form.addEventListener('input', syncSubmitButton);
@@ -57,7 +67,10 @@
     valid = fieldError('website', websiteMessage) && valid;
     if (!valid) {
       feedback('Controleer de gemarkeerde velden. Je aanvraag is nog niet verstuurd.');
-      form.querySelector('[aria-invalid="true"]').focus();
+      const invalid = form.querySelector('[aria-invalid="true"]');
+      const disclosure = invalid.closest('details');
+      if (disclosure) disclosure.open = true;
+      invalid.focus();
     }
     return valid;
   }
@@ -111,6 +124,7 @@
       let result;
       try { result = await response.json(); } catch { throw new Error('De ontvangst kon niet worden bevestigd. Je gegevens blijven staan. Neem bij twijfel contact op via info@lkwebdesign.be.'); }
       if (!result || result.ok !== true) throw new Error('De ontvangst kon niet worden bevestigd. Je gegevens blijven staan. Neem bij twijfel contact op via info@lkwebdesign.be.');
+      window.dispatchEvent(new CustomEvent('lk:interaction', { detail: { name: 'contact_submit_success' } }));
       lastSent = signature;
       form.reset();
       // Hidden input values also update their defaults; clear them explicitly.
@@ -121,6 +135,7 @@
       for (const id of ['name', 'email', 'website', 'message']) fieldError(id, '');
       feedback('Bedankt! Je aanvraag is succesvol verzonden. Ik neem zo snel mogelijk contact met je op.', 'success', true);
     } catch (error) {
+      window.dispatchEvent(new CustomEvent('lk:interaction', { detail: { name: 'contact_submit_error' } }));
       const message = error.name === 'AbortError' || error instanceof TypeError
         ? 'We konden de ontvangst niet bevestigen. Je gegevens blijven staan. Controleer je verbinding; neem bij twijfel contact op via info@lkwebdesign.be voordat je opnieuw verstuurt.'
         : error.message;

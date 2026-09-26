@@ -1,0 +1,70 @@
+.assistant-launch { position: fixed; z-index: 8; right: max(20px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); min-height: 44px; padding: 10px 16px; border: 1px solid #63745b; border-radius: var(--radius); background: var(--ink); color: var(--paper); font-size: 14px; font-weight: 500; box-shadow: 0 4px 18px #151a1826; }
+.assistant-launch::before { content: ''; display: inline-block; width: 6px; height: 6px; margin-right: 10px; background: var(--lime); }
+.assistant-launch:hover { border-color: var(--lime); }
+.assistant-launch:focus-visible { outline-color: #45620e; }
+.assistant-footer { display: block; color: inherit; font-size: 14px; }
+html.assistant-open { overflow: hidden; }
+.assistant-panel { overflow-wrap: anywhere; position: fixed; inset: auto 24px 24px auto; width: min(440px, calc(100% - 32px)); max-width: none; max-height: calc(100dvh - 48px); padding: 0; margin: 0; border: 1px solid #889580; border-radius: 6px; background: var(--paper); color: var(--ink); box-shadow: 0 20px 64px #10181433, 0 2px 8px #1018141a; overflow: hidden; }
+.assistant-panel[open] { display: grid; grid-template-rows: auto minmax(0, 1fr) auto; animation: assistant-enter 160ms ease-out; }
+.assistant-panel::backdrop { background: #10181473; }
+.assistant-head { padding: 20px 24px; position: relative; background: var(--ink); color: var(--paper); }
+.assistant-head .eyebrow { max-width: 22ch; margin: 0 80px 14px 0; font-size: 11px; color: var(--lime); }
+.assistant-head h2 { font-size: 28px; line-height: 1.18; letter-spacing: -.035em; }
+.assistant-head h2:focus { outline: none; }
+.assistant-close { position: absolute; top: 10px; right: 12px; min-height: 44px; padding: 8px 10px; border: 1px solid transparent; border-radius: var(--radius); background: transparent; color: var(--paper); font-size: 13px; }
+.assistant-close:hover { border-color: #63745b; color: var(--lime); }
+.assistant-close:focus-visible { outline-color: var(--lime); }
+.assistant-content { padding: 22px 24px; overflow-y: auto; overscroll-behavior: contain; font-size: 16px; line-height: 1.55; }
+.assistant-content > p { margin: 0 0 16px; }
+.assistant-content > .button { width: 100%; margin-top: 8px; }
+.assistant-content > .lk-link { display: flex; font-size: 14px; }
+.assistant-choice { display: block; text-align: left; width: 100%; padding: 15px 30px 15px 0; min-height: 52px; border: 0; border-bottom: 1px solid var(--line); background: transparent; color: var(--ink); font-size: 15px; line-height: 1.45; position: relative; }
+.assistant-choice::after { content: '→'; position: absolute; right: 6px; top: 15px; font-size: 16px; color: var(--muted); }
+.assistant-choice:hover { background: var(--soft); }
+.assistant-choice:focus-visible { outline-offset: -3px; background: var(--soft); }
+.assistant-choice:active { background: #dce5ce; }
+.assistant-service-title { font-weight: 600; }
+.assistant-amount { font-family: var(--heading); font-size: clamp(25px, 6vw, 34px); font-weight: 600; letter-spacing: -.04em; line-height: 1.2; font-variant-numeric: tabular-nums; }
+.assistant-note { padding-left: 12px; border-left: 3px solid #6a852d; }
+.assistant-prices { margin: 0 0 16px; }
+.assistant-prices > div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px; border-bottom: 1px solid var(--line); padding: 12px 0; }
+.assistant-prices dt { font-size: 14px; }
+.assistant-prices dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+.assistant-controls { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 24px; border-top: 1px solid var(--line); }
+.assistant-controls .text-button { font-size: 14px; }
+.assistant-controls .text-button:last-child { margin-left: auto; }
+.assistant-controls .text-button:disabled { color: var(--muted); opacity: .5; text-decoration: none; cursor: default; }
+
+.assistant-service { padding-block: 0 16px; margin-bottom: 16px; border-bottom: 1px solid var(--line); }
+.assistant-service-heading { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 16px; margin-bottom: 8px; }
+.assistant-service-heading h3 { font-size: 19px; letter-spacing: -.03em; }
+.assistant-service-price { font-size: 17px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: normal; }
+.assistant-service .fine { margin: 0; line-height: 1.5; }
+.assistant-total { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px; margin-bottom: 12px; font-size: 16px; }
+.assistant-total strong { font-family: var(--heading); font-size: 25px; font-weight: 600; line-height: 1.2; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+.assistant-domain { padding-top: 4px; font-size: 15px; }
+.assistant-details { margin-block: 0 16px; border-top: 1px solid var(--line); }
+.assistant-details summary { font-size: 14px; min-height: 48px; padding-block: 14px; }
+.assistant-details summary::after { top: 14px; }
+.assistant-details p { font-size: 14px; line-height: 1.6; }
+
+@keyframes assistant-enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@media (max-width: 600px) {
+  .assistant-launch { right: max(12px, env(safe-area-inset-right)); bottom: max(12px, env(safe-area-inset-bottom)); }
+  .assistant-panel { inset: auto 8px max(8px, env(safe-area-inset-bottom)) 8px; width: auto; max-height: calc(100dvh - 16px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); }
+  .assistant-head { padding: 18px 18px 20px; }
+  .assistant-content { padding: 18px; }
+  .assistant-controls { padding-inline: 18px; }
+}
+@media (prefers-reduced-motion: reduce) { .assistant-panel[open] { animation: none; } }
+
+/* V2: compact structured answers within the existing dialog. */
+.assistant-context { border-left: 2px solid #607e28; padding-left: 12px; font-size: 14px; }
+.assistant-process { padding-left: 22px; margin: 0 0 18px; font-size: 15px; }
+.assistant-process li { padding-block: 3px; }
+
+/* Start choices: stronger first steps, quiet supporting routes, same flow/order. */
+.assistant-content[data-screen="start"] > .fine { color: var(--muted); font-size: 14px; }
+.assistant-content[data-screen="start"] .assistant-choice { min-height: 48px; padding-block: 12px; }
+.assistant-content[data-screen="start"] .assistant-choice::after { top: 12px; }
+.assistant-content[data-screen="start"] .assistant-choice:nth-of-type(-n+2) { font-weight: 600; }

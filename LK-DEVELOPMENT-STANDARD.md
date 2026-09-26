@@ -212,6 +212,24 @@ Gebruik [het resultaattemplate](tests/QA-RESULT-TEMPLATE.md).
 
 ## Visuals, Lighthouse, Figma en browserkosten
 
+Bij Playwright MCP/browserinspectie op grote pagina’s geldt deze volgorde:
+
+1. Zoek een specifiek element, tekst, CTA, formulier, landmark, foutstatus of
+   component eerst met `browser_find`, indien beschikbaar. Ontbreekt deze tool,
+   gebruik de beschikbare gerichte zoekfunctie of ga naar stap 2; installeer niets.
+2. Is bredere DOM/accessibility-context nodig, neem dan een gerichte accessibility
+   snapshot met de kleinste relevante scope/depth/target die de tool ondersteunt.
+3. Neem pas een volledige accessibility snapshot wanneer gerichte inspectie
+   aantoonbaar onvoldoende is; benoem kort waarom.
+4. Gebruik screenshots voor visuele beoordeling; ze vervangen geen structurele
+   of accessibility-inspectie en blijven vereist waar de bestaande visual-regels
+   dat voorschrijven.
+
+Deze inspectievolgorde verlaagt nooit QA-dekking, accessibility-controle of
+kwaliteitsnormen: bestaande Playwright-tests, Axe, screenshots, visual regression
+en Lighthouse-gates blijven volledig gelden. Voor geldig bewijshergebruik geldt
+uitsluitend de sectie ‘PASS-hergebruik’; skillverantwoordelijkheden blijven gelijk.
+
 Baselines zijn goedgekeurde referenties, geen manier om fouten weg te werken.
 Bij verschil: oorzaak → review → intended/regression/uncertain. Alleen expliciet
 geautoriseerde, beoordeelde captures mogen via de bestaande helper worden geaccepteerd,

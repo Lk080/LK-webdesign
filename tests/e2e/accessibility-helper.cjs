@@ -7,7 +7,7 @@ const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'];
 const rules = [...new Set([...axe.getRules(tags).map(rule => rule.ruleId), 'duplicate-id', 'duplicate-id-active', 'duplicate-id-aria'])];
 async function scanAccessibility(page, testInfo, website, state) {
   await page.evaluate(() => document.fonts.ready);
-  const results = await new AxeBuilder({ page }).withRules(rules).analyze();
+  const results = await new AxeBuilder({ page }).options({ preload: { assets: ['media'] } }).withRules(rules).analyze();
   const report = {
     metadata: { ...testInfo.config.metadata, check: 'axe' },
     website, viewport: testInfo.project.name, state, axeVersion: results.testEngine.version,

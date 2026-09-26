@@ -1,0 +1,49 @@
+/* Compact homepage; shared pages and demo styles remain independent. */
+.lk-home .section { padding-block: clamp(44px, 5.4vw, 76px); }
+.home-projects-grid { display: grid; gap: 32px; }
+.home-project { min-width: 0; }
+.home-project-image { display: block; background: #10281f; }
+.home-project-image img { width: 100%; height: auto; }
+.home-project-copy { padding-top: 16px; }
+.home-project-type { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12px; color: var(--muted); }
+.home-project-type span { margin-left: auto; }
+.home-project h3 { margin-block: 8px; font-size: clamp(26px, 2.5vw, 36px); }
+.home-support p { max-width: 65ch; font-size: 15px; }
+.lk-home .footer-inner p { margin-top: 4px; }
+.home-project-copy > p:not(.home-project-type) { max-width: 40ch; font-size: 16px; color: var(--muted); }
+.home-project .project-links { margin-top: 4px; }
+.home-project .project-links a { gap: 24px; font-size: 15px; }
+.home-project#velune .home-project-image { background: #f7f3ed; }
+.home-project#avren .home-project-image { background: #101115; }
+.home-approach { background: var(--soft); }
+.home-approach-grid { display: grid; gap: 28px; }
+.home-approach h2 { margin-bottom: 20px; }
+.home-approach-grid > div > p:not(.eyebrow) { max-width: 42ch; color: var(--muted); }
+.home-approach-grid .lk-link { margin-top: 12px; }
+.home-prices .price-list > div { padding-block: 12px; }
+.home-prices .price-list dd { font-size: clamp(21px, 2vw, 26px); }
+.home-prices small { display: block; font-size: 13px; font-weight: 400; letter-spacing: 0; }
+.home-support { display: grid; gap: 4px; margin-top: 28px; padding-top: 24px; border-top: 1px solid #b5bead; }
+.home-support strong { display: block; margin-bottom: 4px; }
+.home-personal-grid { display: grid; gap: 22px; }
+.home-personal h2 { margin-bottom: 0; font-size: clamp(34px, 4vw, 56px); }
+.home-personal .button { margin-top: 24px; }
+.lk-home .site-footer { padding-block: 24px; }
+.lk-home .footer-inner { gap: 14px; }
+.lk-home .footer-inner > .fine { margin-top: 0; }
+@media (min-width: 701px) {
+  .home-projects-grid { grid-template-columns: 5fr 7fr; gap: 36px; align-items: start; }
+  .home-project-featured { grid-column: 1 / -1; }
+  .home-project#avren { margin-top: 36px; }
+  .home-approach-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+  .home-personal-grid { grid-template-columns: 1.1fr 1fr; gap: 48px; align-items: center; }
+  .home-support { grid-template-columns: 1fr auto; gap: 32px; align-items: center; }
+  .home-support .lk-link { white-space: nowrap; }
+}
+@media (min-width: 901px) {
+  .home-project-featured { display: grid; grid-template-columns: 1.7fr 1fr; gap: 40px; align-items: center; }
+  .home-project-featured .home-project-copy { padding-top: 0; }
+  .home-projects-grid { gap: 44px; }
+  .home-approach-grid { gap: 80px; }
+  .home-support { margin-top: 36px; }
+}

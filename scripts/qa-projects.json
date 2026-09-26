@@ -218,7 +218,10 @@
       ],
       "adapters": {
         "functional": [
-          "sites.spec.cjs"
+          "sites.spec.cjs",
+          "lk-slice-one.spec.cjs",
+          "lk-final-flows.spec.cjs",
+          "lk-assistant.spec.cjs"
         ],
         "axe": [
           "accessibility.spec.cjs"
@@ -275,7 +278,7 @@
       "components": {
         "header": "body > header",
         "hero": ".hero",
-        "portfolio": "#voorbeelden",
+        "portfolio": "#projecten",
         "pricing": "#prijzen",
         "contact": "#contact",
         "footer": "body > footer"

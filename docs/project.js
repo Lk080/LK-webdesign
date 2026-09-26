@@ -1,61 +1,39 @@
 (() => {
   'use strict';
   const builder = document.getElementById('project-builder');
-  builder.hidden = false;
-  const form = document.getElementById('contact-form');
+  if (!builder) return;
+  const commercial = window.LKCommercial;
   const pages = document.getElementById('project-pages');
-  const typeLabels = { new: 'Een nieuwe website', existing: 'Mijn bestaande website laten beoordelen', automation: 'AI en automatisering' };
-  const prices = {
-    '1-3': document.querySelector('[data-plan="start"]').dataset.startPrice,
-    '5-7': document.querySelector('[data-plan="groei"]').dataset.startPrice
-  };
-  const format = number => new Intl.NumberFormat('nl-BE', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(Number(number));
-  function selection() {
-    const type = builder.querySelector('[name="project-type"]:checked').value;
-    const extras = [...builder.querySelectorAll('[name="project-extra"]:checked')].map(input => input.value);
-    let label = 'Persoonlijk voorstel';
-    let price = 'Op offerte';
-    let detail = 'We bespreken de omvang en maken eerst een duidelijk voorstel.';
-    if (type === 'new' && prices[pages.value]) {
-      label = pages.value === '1-3' ? 'Start' : 'Groei';
-      price = `Vanaf ${format(prices[pages.value])}`;
-      detail = `${pages.value.replace('-', ' tot ')} pagina’s in één taal, inclusief contactformulier.`;
-      if (extras.length) detail += ' Dit is alleen de basisprijs. De gekozen extra’s worden apart begroot.';
-    } else if (type === 'existing') {
-      label = 'Eerst beoordelen';
-      detail = 'We bekijken het huidige systeem, de toegangen en je wensen. Daarna volgt een gericht voorstel.';
-    } else if (type === 'automation') {
-      label = 'Slim maatwerk';
-      detail = 'De prijs hangt af van je werkproces, koppelingen en gewenste functies.';
-    }
-    return { type, extras, label, price, detail };
-  }
+  const initial = commercial.read(new URLSearchParams(location.search));
+  document.getElementById('project-type').value = initial.type;
+  builder.querySelector(`[name="complexity"][value="${initial.complexity}"]`).checked = true;
+  pages.value = initial.pages;
+  builder.querySelectorAll('[name="project-extra"]').forEach(input => { input.checked = initial.extras.includes(input.value); });
+  document.getElementById('extra-options').open = initial.extras.some(key => !['api', 'shop'].includes(key));
+  builder.hidden = false;
+  const selection = () => ({ type: document.getElementById('project-type').value, pages: pages.value, complexity: builder.querySelector('[name="complexity"]:checked').value, extras: [...builder.querySelectorAll('[name="project-extra"]:checked')].map(input => input.value) });
+  window.LKCalculatorSelection = () => commercial.read(new URLSearchParams(commercial.query(selection())));
+  const signal = name => window.dispatchEvent(new CustomEvent('lk:interaction', { detail: { name } }));
   function render() {
     const selected = selection();
-    document.getElementById('page-options').hidden = selected.type !== 'new';
-    pages.disabled = selected.type !== 'new';
-    document.getElementById('estimate-package').textContent = selected.label;
-    document.getElementById('estimate-price').textContent = selected.price;
-    document.getElementById('estimate-detail').textContent = selected.detail;
+    const result = commercial.calculate(selected);
+    for (const key of ['label', 'detail']) document.getElementById(`estimate-${key === 'label' ? 'package' : key}`).textContent = result[key];
+    document.getElementById('estimate-price').textContent = result.inclusivePrice;
+    document.getElementById('estimate-vat').textContent = result.custom ? '' : `Incl. 21% btw\n${result.price} excl. 21% btw`;
+    const count = selected.extras.filter(key => !['api', 'shop'].includes(key)).length;
+    document.getElementById('extra-count').textContent = count ? `(${count} gekozen)` : '(optioneel)';
+    document.getElementById('estimate-context').textContent = `${commercial.pages[selected.pages]} · ${commercial.complexities[selected.complexity]}. Functies: ${selected.extras.map(key => commercial.extras[key]).join(', ') || 'Geen extra functies'}.`;
+    document.getElementById('use-estimate').href = `contact.html?${commercial.query(selected)}`;
+    window.dispatchEvent(new CustomEvent('lk:calculator-change', { detail: { query: commercial.query(selected) } }));
   }
+  builder.addEventListener('submit', event => event.preventDefault());
   builder.addEventListener('change', render);
+  builder.addEventListener('focusin', () => signal('calculator_start'), { once: true });
+  builder.addEventListener('reset', () => setTimeout(() => { document.getElementById('extra-options').open = false; render(); }, 0));
+  document.getElementById('use-estimate').addEventListener('click', () => { signal('calculator_complete'); signal('calculator_contact'); });
   render();
-  document.getElementById('use-estimate').addEventListener('click', () => {
-    if (form.getAttribute('aria-busy') === 'true') return;
-    const selected = selection();
-    const summary = [typeLabels[selected.type], selected.type === 'new' ? `Pagina’s: ${pages.options[pages.selectedIndex].text}` : '', `Richting: ${selected.label} — ${selected.price} (indicatief, excl. btw)`, `Extra’s: ${selected.extras.join(', ') || 'Geen geselecteerd'}`, 'Extra functies en abonnementskosten worden afzonderlijk begroot.'].filter(Boolean).join('\n');
-    document.getElementById('interest').value = typeLabels[selected.type];
-    document.getElementById('selected-package').value = selected.label;
-    document.getElementById('project-summary').value = summary;
-    document.getElementById('request-plan-text').textContent = summary;
-    document.getElementById('request-plan').hidden = false;
-    form.dispatchEvent(new Event('input', { bubbles: true }));
+  const visibility = new IntersectionObserver(entries => {
+    document.body.classList.toggle('calculator-in-view', entries[0].isIntersecting);
   });
-  document.getElementById('remove-plan').addEventListener('click', () => {
-    document.getElementById('project-summary').value = '';
-    document.getElementById('selected-package').value = '';
-    document.getElementById('request-plan').hidden = true;
-    form.dispatchEvent(new Event('input', { bubbles: true }));
-    document.getElementById('interest').focus();
-  });
+  visibility.observe(builder);
 })();

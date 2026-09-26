@@ -1,5 +1,21 @@
 # LK Webdesign — frontend en externe koppelingen
 
+## Actuele bronstatus — 27 september 2026
+
+**Deze sectie vervangt strijdige historische implementatiebeschrijvingen hieronder.**
+
+- Lokale Final: `docs/index.html`, `docs/aanpak.html`, `docs/contact.html`; centrale commerciële bron `docs/commercial.js`. Calculator `project.js`, contactcontext `request-context.js`, actieve lokale keuzehulp `assistant.js`. Geen externe AI of nieuwe backend.
+- Formulier staat lokaal op **contact.html**, endpoint `https://formspree.io/f/mjyvnevy`. `contact.js` bewaakt validatie, honeypot, lock, timeout, fout/invoerbehoud en HTTP + JSON-bevestiging. Endpoint, payloadvelden en afleverlogica zijn niet veranderd in de btw-opdracht; alleen de prijsinhoud van projectcontext toont voortaan bruto en netto.
+- Eén echte, afzonderlijk geautoriseerde test op **de huidige publieke homepage** op 27-09: Formspree → zakelijke Outlook-inbox → correcte reply naar Hotmail bewezen. Hotmail-reply in Junk. Dit is geen bewijs dat de nieuwere lokale Contact-route al gepubliceerd is. Geen nieuwe echte test zonder afzonderlijke opdracht; hergebruik bezorgbewijs zolang de relevante transportconfiguratie gelijk blijft. Details: [maildossier](LK-EMAIL-DNS-PRELAUNCH.md).
+- Btw-presentatie: nieuw owner-besluit B2B/B2C, incl. 21% primair / excl. secundair, lokale voorbereiding; registratie en fiscale toepasbaarheid vóór publicatie bevestigen. Netto bedragen/gewichten ongewijzigd; [Commercial Requirements](LK-COMMERCIAL-REQUIREMENTS.md) leidend.
+- Productie read-only gecontroleerd op 27-09: GitHub.com responseheaders, oudere eenpaginawebsite; Aanpak/Contact/commercial.js 404. `docs/CNAME` bevestigt de bedoelde domeinkoppeling, niet de accountinstellingen. `main → /docs` blijft historisch gedocumenteerd, accountconfiguratie niet opnieuw ingezien.
+- Assistent is actief en lokaal, met vaste keuzes en niet-persoonlijke sessionStorage-context. De onderstaande verborgen-preview-/backendvoorbereiding is **HISTORICAL / SUPERSEDED**, geen actuele architectuur of toestemming voor AI-integratie.
+- Portfolio Kelmora/Velune/AVREN is lokaal geïntegreerd als fictieve demo’s. Freeze/publicatiefase uit projectregistratie; geen demo-heropening.
+- Hostinggeschiktheid, privacy/retentie/DPA, registratie en uiteindelijke release blijven open. Zie [master control](LK-PRELAUNCH-MASTER-CONTROL.md). Geen DNS, accounts of deployment gewijzigd.
+
+## Historische implementatienotities — niet als huidige source of truth gebruiken
+
+
 Status: lokale wijzigingen voor beoordeling; geen toestemming voor een volgende
 bouwslice, commit, push of publicatie. Bestaande LK-site-inrichting: GitHub Pages
 `main` → `/docs`, met https://lkwebdesign.be/ in de bronconfiguratie. De
