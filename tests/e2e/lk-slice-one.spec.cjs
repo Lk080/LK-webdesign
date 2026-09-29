@@ -99,8 +99,9 @@ test.describe('LK Webdesign preserved identity and navigation', () => {
     }
     await expect(page.locator('#kelmora .project-links a').first()).toHaveAttribute('href', 'demos/vakman/');
     await page.locator('.lk-actions .lk-button').click();
-    await expect(page).toHaveURL(/contact\.html$/);
-    await expect(page.locator('#contact-form')).toBeVisible();
+    await expect(page).toHaveURL(/aanpak\.html#projectkeuze$/);
+    await expect(page.locator('#project-builder')).toBeVisible();
+    await expect(page.locator('#project-type')).toBeInViewport();
     // Frozen Kelmora is never navigated to or retested by this slice.
   });
 

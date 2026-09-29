@@ -1,0 +1,24 @@
+{
+  "contractVersion": "1.0.0",
+  "engineVersion": "1.0.0",
+  "registry": "scripts/qa-projects.json",
+  "bindingStatuses": ["BOUND", "UNBOUND", "NOT_APPLICABLE"],
+  "areas": {
+    "designTokens": "Project-owned CSS tokens; no prescribed palette, typography or visual template.",
+    "navigation": "Semantic links, keyboard operation, focus and accurate expanded state; routes/selectors remain in the registry.",
+    "responsive": "Mobile-first layout, reflow, zoom and reduced-motion support; project-specific breakpoints.",
+    "forms": "Replaceable transport adapter; explicit success/failure, timeout and duplicate-submit handling; QA mocks external writes.",
+    "validation": "Idle, invalid, submitting, success and error states; accessible errors and preserved input on failure.",
+    "accessibility": "Semantic HTML, labels, focus, keyboard and contrast; automated checks plus scoped manual verification.",
+    "seo": "Per-page language, title, description, heading and canonical/index policy; publication truth remains in the registry.",
+    "socialMetadata": "Consistent canonical/OG URL and explicit social image; no invented production URLs.",
+    "structuredData": "Project-owned JSON-LD matching visible confirmed facts; parsing is not complete semantic validation.",
+    "analytics": "Optional local event adapter; no collection by default, no form content/PII in events, success only after confirmed transport success.",
+    "consent": "Optional processing denied until valid consent; withdrawal stops processing; no replay of pre-consent events.",
+    "performance": "Progressive enhancement and bounded assets/JS; budgets and lab targets stay in the registry; field data stays separate.",
+    "images": "Dimensions/aspect ratio, appropriate alt text, responsive sources and deliberate loading priority; record licensing/source.",
+    "securityPrivacy": "No frontend secrets, minimal data, safe text rendering and least privilege; remote scans require a separately reviewed backend.",
+    "qa": "Use existing registry, runners, artifact hashes, freeze/network guards and explicit human release approval.",
+    "deployment": "Optional provider/build/release references only; no credentials or provisioning; export and recovery must not require LK runtime access."
+  }
+}

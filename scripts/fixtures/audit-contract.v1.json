@@ -1,0 +1,39 @@
+{
+  "contractVersion": "1.0.0",
+  "methodologyVersion": "1.0.0",
+  "projectId": "fixture-client",
+  "snapshot": {
+    "source": "0000000000000000000000000000000000000000000000000000000000000000",
+    "configuration": "1111111111111111111111111111111111111111111111111111111111111111",
+    "baselines": "2222222222222222222222222222222222222222222222222222222222222222",
+    "environment": {"fixture": true, "tool": "contract-test/1.0.0"}
+  },
+  "checks": [{
+    "ruleId": "lk.accessibility.image-alt",
+    "category": "accessibility",
+    "severity": "INFO",
+    "confidence": 1,
+    "page": "https://fixture.invalid/",
+    "location": {"selector": "img", "resource": null, "line": null},
+    "viewport": "desktop-chromium",
+    "state": "initial",
+    "explanation": "Fictional fixture: the tested image has a suitable alternative.",
+    "businessExplanation": "Fictional fixture: the image meaning remains available without seeing it.",
+    "recommendedAction": "Preserve the alternative when replacing the image; recheck its meaning.",
+    "evidence": {
+      "type": "LK_AUTOMATED",
+      "availability": "AVAILABLE",
+      "artifact": "fixtures/fictitious-observation.json",
+      "sha256": "3333333333333333333333333333333333333333333333333333333333333333",
+      "observedAt": "2026-09-28T10:00:00.000Z",
+      "producer": "Fictional contract fixture/1.0.0; not a real scan",
+      "window": null,
+      "reason": null
+    },
+    "verification": {"method": "Fictional deterministic image-alt assertion", "result": "PASS", "at": "2026-09-28T10:00:00.000Z"},
+    "remediationSafety": "LEVEL_1_REPORT_ONLY",
+    "status": "VERIFIED",
+    "outcome": "PASS",
+    "limitation": null
+  }]
+}

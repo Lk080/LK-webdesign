@@ -30,7 +30,7 @@
     "qa:visual:accept": "node scripts/qa-accept.cjs",
     "qa:foundation": "node scripts/qa-foundation.cjs",
     "qa:tooling": "node scripts/qa-tooling.cjs",
-    "qa:unit": "node --test scripts/qa-levels.test.cjs scripts/qa-foundation.test.cjs"
+    "qa:unit": "node --test scripts/qa-levels.test.cjs scripts/qa-foundation.test.cjs scripts/engine-contracts.test.cjs scripts/analytics.test.cjs"
   },
   "repository": {
     "type": "git",

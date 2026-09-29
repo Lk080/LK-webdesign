@@ -9,6 +9,7 @@
   const configured = /^https:\/\/formspree\.io\/f\/[a-zA-Z0-9]+$/.test(endpoint);
   let sending = false;
   let lastSent = '';
+  let confirmedReceipt = 0;
   form.noValidate = true;
   function syncSubmitButton() {
     button.disabled = !configured || sending;
@@ -124,8 +125,9 @@
       let result;
       try { result = await response.json(); } catch { throw new Error('De ontvangst kon niet worden bevestigd. Je gegevens blijven staan. Neem bij twijfel contact op via info@lkwebdesign.be.'); }
       if (!result || result.ok !== true) throw new Error('De ontvangst kon niet worden bevestigd. Je gegevens blijven staan. Neem bij twijfel contact op via info@lkwebdesign.be.');
-      window.dispatchEvent(new CustomEvent('lk:interaction', { detail: { name: 'contact_submit_success' } }));
       lastSent = signature;
+      confirmedReceipt += 1;
+      window.dispatchEvent(new CustomEvent('lk:interaction', { detail: { name: 'contact_submit_success', receipt: confirmedReceipt } }));
       form.reset();
       // Hidden input values also update their defaults; clear them explicitly.
       document.getElementById('selected-package').value = '';

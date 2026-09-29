@@ -3,6 +3,10 @@
 De bestaande stack blijft: HTMLHint, Stylelint, ESLint, Playwright, Axe, Linkinator
 en Lighthouse. Geen tweede testframework, nieuwe dependencies of websitearchitectuur.
 
+De optionele [Website/Audit Engine v1-contractlaag](ENGINE-CONTRACTS.md) beschrijft
+versieerbare bindings/findings en een beperkende auditconsumer bovenop deze foundation.
+De bestaande runners en releasebevoegdheden blijven ongewijzigd.
+
 ## Centrale registratie
 
 `scripts/qa-projects.json` is de bron voor IDs/namen, bronnen/routes, freeze,

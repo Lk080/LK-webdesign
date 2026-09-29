@@ -43,7 +43,7 @@
     "components": {
       "header": "body > header",
       "hero": ".hero",
-      "portfolio": "#voorbeelden",
+      "portfolio": "#projecten",
       "pricing": "#prijzen",
       "contact": "#contact",
       "footer": "body > footer"

@@ -236,13 +236,23 @@
     render(); signal('assistant_open');
   });
   // Yield to content/controls; the footer entry remains available at all times.
+  const consentBanner = document.getElementById('consent-banner');
+  const privacyDialog = document.getElementById('privacy-dialog');
   let scheduled = false;
   function position() {
     scheduled = false;
+    // Consent owns this area, including when its banner returns while the dock is focused.
+    const consentFocus = privacyDialog?.open ? document.getElementById('privacy-title')
+      : consentBanner && !consentBanner.hidden ? consentBanner.querySelector('button') : null;
+    if (consentFocus) {
+      if (document.activeElement === dock) consentFocus.focus({ preventScroll: true });
+      dock.hidden = true;
+      return;
+    }
     if (dialog?.open || document.activeElement === dock) return;
     dock.hidden = false;
     const rect = dock.getBoundingClientRect();
-    const overlaps = [...document.querySelectorAll('main label, main legend, main a, main button, main input, main select, main textarea, main summary, main p, main h1, main h2, main h3, main img, main dt, main dd, .site-footer a')].some(node => {
+    const overlaps = [...document.querySelectorAll('main label, main legend, main a, main button, main input, main select, main textarea, main summary, main p, main h1, main h2, main h3, main img, main dt, main dd, .site-footer a, .site-footer button')].some(node => {
       const box = node.getBoundingClientRect();
       return box.width > 0 && box.height > 0 && box.left < rect.right + 8 && box.right > rect.left - 8 && box.top < rect.bottom + 8 && box.bottom > rect.top - 8;
     });
@@ -251,6 +261,9 @@
   }
   function schedule() { if (!scheduled) { scheduled = true; requestAnimationFrame(position); } }
   addEventListener('scroll', schedule, { passive: true }); addEventListener('resize', schedule);
-  document.addEventListener('focusin', schedule); document.addEventListener('click', schedule);
-  document.fonts.ready.then(schedule); schedule();
+  addEventListener('lk:consent-change', position);
+  privacyDialog?.addEventListener('close', schedule);
+  document.addEventListener('focusin', event => { if (event.target === dock) position(); else schedule(); });
+  document.addEventListener('click', schedule);
+  document.fonts.ready.then(schedule); position();
 })();

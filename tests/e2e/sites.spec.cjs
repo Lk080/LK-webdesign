@@ -37,6 +37,10 @@ for (const site of sites) test.describe(site.name, () => {
       const link = page.locator(selector);
       // A header CTA may intentionally be hidden on mobile; the hero CTA is always required.
       if (selector.startsWith('header') && !await link.isVisible()) continue;
+      if (site.name === 'LK Webdesign' && selector.startsWith('.hero')) {
+        await expect(link).toHaveAccessibleName('Bereken je website');
+        await expect(link).toHaveAttribute('href', 'aanpak.html#projectkeuze');
+      }
       const target = await link.getAttribute('href');
       await link.click();
       if (target.startsWith('#')) await expect(page.locator(target)).toBeInViewport();
@@ -46,7 +50,10 @@ for (const site of sites) test.describe(site.name, () => {
         if (destination.hash) await expect(page.locator(destination.hash)).toBeInViewport();
         else await expect(page.locator('h1')).toBeVisible();
       }
-      if (site.name === 'LK Webdesign') await expect(page.locator('#contact-form')).toBeVisible();
+      if (site.name === 'LK Webdesign') {
+        if (selector.startsWith('.hero')) await expect(page.locator('#project-type')).toBeInViewport();
+        else await expect(page.locator('#contact-form')).toBeVisible();
+      }
     }
   });
   test('mobiele navigatie openen en sluiten', async ({ page, isMobile }) => {

@@ -221,7 +221,8 @@
           "sites.spec.cjs",
           "lk-slice-one.spec.cjs",
           "lk-final-flows.spec.cjs",
-          "lk-assistant.spec.cjs"
+          "lk-assistant.spec.cjs",
+          "lk-consent.spec.cjs"
         ],
         "axe": [
           "accessibility.spec.cjs"

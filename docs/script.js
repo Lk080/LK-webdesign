@@ -46,11 +46,7 @@ wideNavigation.addEventListener('change', () => {
   else if (!wideNavigation.matches && nav.contains(focused)) menu.focus();
 });
 document.getElementById('year').textContent = new Date().getFullYear();
-// Local event hook only: no tracker, network request or personal data.
-document.addEventListener('click', event => {
-  const link = event.target.closest('[data-event]');
-  if (link) window.dispatchEvent(new CustomEvent('lk:interaction', { detail: { name: link.dataset.event } }));
-});
+// CTA hooks live in the consent-gated analytics adapter; navigation is independent.
 document.querySelectorAll('details').forEach(item => item.addEventListener('toggle', () => {
   if (item.open) window.dispatchEvent(new CustomEvent('lk:interaction', { detail: { name: 'faq_open' } }));
 }));

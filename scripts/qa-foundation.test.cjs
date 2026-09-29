@@ -54,6 +54,13 @@ test('Lighthouse missing/below targets cannot silently pass',()=>{
   assert.equal(evaluate({categories:{seo:{score:.949}}},{seo:95}).targetStatus,'BELOW_TARGET');
   assert.equal(evaluate({categories:{seo:{score:1}}},{seo:95}).targetStatus,'TARGETS_MET');
 });
+test('Lighthouse page selection preserves project ownership and frozen-demo boundaries',()=>{
+  const {resolvePage}=require('./lighthouse.config.cjs');
+  assert.equal(resolvePage('lk'),'/');
+  for(const route of ['/','/index.html','/aanpak.html','/contact.html'])assert.equal(resolvePage('lk',route),route);
+  for(const route of ['/demos/vakman/','/demos/beauty/','/demos/automotive/','https://external.invalid/','//external.invalid/','/missing.html','/../contact.html','/contact.html?test=1','/contact.html#contact'])assert.throws(()=>resolvePage('lk',route),/owned HTML route/);
+  assert.throws(()=>resolvePage('kelmora'),/bevroren/);
+});
 test('SEO/JSON-LD/srcset checks reject actual inconsistencies',()=>{
   const html='<html lang="nl"><title>Demo</title><meta name="description" content="Demo"><meta name="viewport" content="width=device-width"><h1>Demo</h1><link rel="canonical" href="https://example.org/"><meta property="og:url" content="https://wrong.org/"><script type="application/ld+json">{broken}</script><img src="x.webp" srcset="x.webp 800w" width="200" height="100">';
   const r=inspectHTML(html,projects.automotive,()=>({dimensions:{width:400,height:200},bytes:1}));

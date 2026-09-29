@@ -74,6 +74,16 @@ function reuseEvidence(entry, previousDir, current, reason) {
   if(hash(file)!==entry.artifactHash)throw Error('Reuse artifact changed');
   return {...entry,artifact:file,reuse:{status:'REUSED',reason,sourceRun:entry.runId}};
 }
+// Optional contract consumer; cannot upgrade existing QA or grant owner approval.
+function assessAudit(entries, project, current, audit, requiredAudit, asOf) {
+  const status = assess(entries, project, current);
+  const auditStatus = require('./engine-contracts.cjs').auditGate(audit, {projectId: project, snapshot: current, required: requiredAudit, asOf});
+  if (auditStatus.status !== 'PASS') {
+    status.technicalStatus = 'TECHNICAL_GATE_INCOMPLETE';
+    status.deliveryStatus = 'NOT_READY';
+  }
+  return {...status, audit: auditStatus};
+}
 function approve(status, approval, current) {
   if(status.technicalStatus!=='TECHNICAL_GATE_PASS'||approval?.decision!=='approve'||!approval?.reviewer||!approval?.reviewedAt||!approval?.evidence||approval?.actor!=='human-owner'||JSON.stringify(approval.snapshot)!==JSON.stringify(current))throw Error('Explicit human owner approval for this exact state required');
   return {...status,deliveryStatus:'DELIVERY_APPROVED',approval};
@@ -88,4 +98,4 @@ function finish(ctx, jobs, results) {
   fs.writeFileSync(path.join(ctx.dir,'evidence.json'),JSON.stringify(report,null,2));
   return report;
 }
-module.exports={evidence,browserResults,readEvidence,assess,reuseEvidence,approve,finish};
+module.exports={evidence,browserResults,readEvidence,assess,assessAudit,reuseEvidence,approve,finish};

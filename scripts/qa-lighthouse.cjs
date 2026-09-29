@@ -8,7 +8,9 @@ process.env.PLAYWRIGHT_BROWSERS_PATH = path.join(root, '.cache/ms-playwright');
 process.env.TMPDIR = path.join(root, '.cache/tmp');
 async function main() {
   const selected = process.argv[2];
-  const selectedMode = process.argv[3];
+  const selectedMode = process.argv[3] === 'both' ? undefined : process.argv[3];
+  const selectedPage = process.argv[4];
+  if (process.argv.length > 5) throw Error('Usage: qa-lighthouse.cjs <project> [desktop|mobile|both] [owned-page]');
   if (selectedMode && !Object.hasOwn(config.modes, selectedMode)) throw Error('Mode: desktop or mobile');
   const { context, reserve, stamp } = require('./qa-run.cjs');
   const ctx = context(selected, 'lighthouse');
@@ -35,7 +37,8 @@ async function main() {
     ]);
     const executablePath = require('playwright').chromium.executablePath();
     await fs.access(executablePath);
-    for (const site of config.sites.filter(s => !selected || s.id === selected)) {
+    for (const registered of config.sites.filter(s => !selected || s.id === selected)) {
+      const site = {...registered, path: config.resolvePage(registered.id, selectedPage)};
       for (const [mode, settings] of Object.entries(config.modes).filter(([mode]) => !selectedMode || selectedMode === mode)) {
         const dir = path.join(runDir, site.id, mode);
         await fs.mkdir(dir, { recursive: true });

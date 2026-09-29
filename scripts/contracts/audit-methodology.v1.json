@@ -1,0 +1,13 @@
+{
+  "contractVersion": "1.0.0",
+  "methodologyVersion": "1.0.0",
+  "name": "LK Audit Methodology 1.0",
+  "categories": ["performance", "accessibility", "seo", "mobile-ux", "security-basics", "structured-data", "ai-ready-foundations", "critical-flows"],
+  "severities": ["CRITICAL", "HIGH", "MEDIUM", "LOW", "INFO"],
+  "evidenceTypes": ["LAB", "FIELD", "LK_AUTOMATED", "MANUAL", "BUSINESS_OBSERVATION"],
+  "availability": ["AVAILABLE", "MISSING", "UNAVAILABLE"],
+  "statuses": ["DETECTED", "CONFIRMED", "PLANNED", "FIXED", "VERIFIED", "ACCEPTED_LIMITATION"],
+  "outcomes": ["PASS", "FAIL", "REVIEW_REQUIRED", "NOT_TESTED", "ACCEPTED_LIMITATION"],
+  "remediationSafety": ["LEVEL_1_REPORT_ONLY", "LEVEL_2_PROPOSE_FIX", "LEVEL_3_LOW_RISK_AUTOFIX_CANDIDATE", "LEVEL_4_REQUIRES_HUMAN_APPROVAL"],
+  "scoring": {"overall": "NOT_IMPLEMENTED", "weighting": null, "missingValue": null}
+}
